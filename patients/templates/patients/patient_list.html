@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Patients - Medical System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-users me-2"></i>Patients</h2>
+            <p class="text-muted">Total Patients: {{ total_patients }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'patient_create' %}" class="btn btn-primary">
+                <i class="fas fa-user-plus me-1"></i>Add New Patient
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3" id="searchForm">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search patients..." 
+                               value="{{ search_query }}" id="searchInput">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="gender" class="form-select" id="genderFilter">
+                        <option value="">All Genders</option>
+                        <option value="M" {% if selected_gender == 'M' %}selected{% endif %}>Male</option>
+                        <option value="F" {% if selected_gender == 'F' %}selected{% endif %}>Female</option>
+                        <option value="O" {% if selected_gender == 'O' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="blood_group" class="form-select" id="bloodGroupFilter">
+                        <option value="">All Blood Groups</option>
+                        <option value="A+" {% if selected_blood_group == 'A+' %}selected{% endif %}>A+</option>
+                        <option value="A-" {% if selected_blood_group == 'A-' %}selected{% endif %}>A-</option>
+                        <option value="B+" {% if selected_blood_group == 'B+' %}selected{% endif %}>B+</option>
+                        <option value="B-" {% if selected_blood_group == 'B-' %}selected{% endif %}>B-</option>
+                        <option value="AB+" {% if selected_blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                        <option value="AB-" {% if selected_blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                        <option value="O+" {% if selected_blood_group == 'O+' %}selected{% endif %}>O+</option>
+                        <option value="O-" {% if selected_blood_group == 'O-' %}selected{% endif %}>O-</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Patients List -->
+    {% if page_obj %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_gender %}gender={{ selected_gender }}&{% endif %}{% if selected_blood_group %}blood_group={{ selected_blood_group }}&{% endif %}sort=name&direction={% if current_sort.field == 'name' and current_sort.direction == 'asc' %}desc{% else %}asc{% endif %}" 
+                           class="text-decoration-none text-dark">
+                            Name
+                            {% if current_sort.field == 'name' %}
+                                <i class="fas fa-sort-{% if current_sort.direction == 'asc' %}up{% else %}down{% endif %}"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_gender %}gender={{ selected_gender }}&{% endif %}{% if selected_blood_group %}blood_group={{ selected_blood_group }}&{% endif %}sort=age&direction={% if current_sort.field == 'age' and current_sort.direction == 'asc' %}desc{% else %}asc{% endif %}" 
+                           class="text-decoration-none text-dark">
+                            Age
+                            {% if current_sort.field == 'age' %}
+                                <i class="fas fa-sort-{% if current_sort.direction == 'asc' %}up{% else %}down{% endif %}"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Gender</th>
+                    <th>Contact</th>
+                    <th>Blood Group</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in page_obj %}
+                <tr>
+                    <td>
+                        <a href="{% url 'patient_detail' patient.pk %}" class="text-decoration-none">
+                            {{ patient.name }}
+                        </a>
+                    </td>
+                    <td>{{ patient.age }}</td>
+                    <td>{{ patient.get_gender_display }}</td>
+                    <td>{{ patient.contact }}</td>
+                    <td>{{ patient.blood_group|default:"-" }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{% url 'patient_detail' patient.pk %}" class="btn btn-sm btn-info" 
+                               data-bs-toggle="tooltip" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'patient_update' patient.pk %}" class="btn btn-sm btn-primary"
+                               data-bs-toggle="tooltip" title="Edit Patient">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'patient_delete' patient.pk %}" class="btn btn-sm btn-danger"
+                               data-bs-toggle="tooltip" title="Delete Patient">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_blood_group %}&blood_group={{ selected_blood_group }}{% endif %}{% if current_sort.field %}&sort={{ current_sort.field }}&direction={{ current_sort.direction }}{% endif %}" aria-label="First">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_blood_group %}&blood_group={{ selected_blood_group }}{% endif %}{% if current_sort.field %}&sort={{ current_sort.field }}&direction={{ current_sort.direction }}{% endif %}" aria-label="Previous">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_blood_group %}&blood_group={{ selected_blood_group }}{% endif %}{% if current_sort.field %}&sort={{ current_sort.field }}&direction={{ current_sort.direction }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_blood_group %}&blood_group={{ selected_blood_group }}{% endif %}{% if current_sort.field %}&sort={{ current_sort.field }}&direction={{ current_sort.direction }}{% endif %}" aria-label="Next">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_blood_group %}&blood_group={{ selected_blood_group }}{% endif %}{% if current_sort.field %}&sort={{ current_sort.field }}&direction={{ current_sort.direction }}{% endif %}" aria-label="Last">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>No patients found.
+    </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+    // Auto-submit form when filters change
+    document.getElementById('genderFilter').addEventListener('change', function() {
+        document.getElementById('searchForm').submit();
+    });
+    
+    document.getElementById('bloodGroupFilter').addEventListener('change', function() {
+        document.getElementById('searchForm').submit();
+    });
+
+    // Debounce search input
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            document.getElementById('searchForm').submit();
+        }, 500);
+    });
+
+    // Add animation to table rows
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transition = 'all 0.3s ease';
+            this.style.transform = 'scale(1.01)';
+            this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = 'none';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

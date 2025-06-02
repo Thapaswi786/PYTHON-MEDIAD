@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}MEDIAID - Medical Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1 class="display-3 mb-4 fw-bold text-primary">MEDIAID</h1>
+            <p class="lead mb-5">Your Trusted Healthcare Management Solution</p>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Patient Management</h5>
+                    <p class="card-text">Efficiently manage patient records, medical history, and personal information in one secure location.</p>
+                    <a href="{% url 'patient_list' %}" class="btn btn-primary">View Patients</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Appointments</h5>
+                    <p class="card-text">Streamline appointment scheduling and management for better patient care coordination.</p>
+                    <a href="#" class="btn btn-primary">View Appointments</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-medical fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Medical Records</h5>
+                    <p class="card-text">Securely store and access comprehensive medical records and test results.</p>
+                    <a href="#" class="btn btn-primary">View Records</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12 text-center">
+            <h2 class="mb-4">Why Choose MEDIAID?</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="p-3">
+                        <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
+                        <h5>Secure</h5>
+                        <p>HIPAA compliant data protection</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3">
+                        <i class="fas fa-tachometer-alt fa-2x text-primary mb-3"></i>
+                        <h5>Efficient</h5>
+                        <p>Streamlined workflows</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3">
+                        <i class="fas fa-mobile-alt fa-2x text-primary mb-3"></i>
+                        <h5>Accessible</h5>
+                        <p>Available on all devices</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3">
+                        <i class="fas fa-headset fa-2x text-primary mb-3"></i>
+                        <h5>Support</h5>
+                        <p>24/7 technical assistance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

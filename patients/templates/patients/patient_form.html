@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">
+                        {% if form.instance.pk %}
+                            Edit Patient
+                        {% else %}
+                            Add New Patient
+                        {% endif %}
+                    </h2>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                {% if form.instance.pk %}
+                                    Update Patient
+                                {% else %}
+                                    Add Patient
+                                {% endif %}
+                            </button>
+                            <a href="{% if form.instance.pk %}{% url 'patient_detail' form.instance.pk %}{% else %}{% url 'patient_list' %}{% endif %}" 
+                               class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,167 @@
+{% extends 'patients/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ patient.name }} - Medical System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Patient Details</h2>
+                <div>
+                    <a href="{% url 'patient_update' patient.pk %}" class="btn btn-primary">Edit Patient</a>
+                    <a href="{% url 'patient_delete' patient.pk %}" class="btn btn-danger">Delete Patient</a>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Personal Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> {{ patient.name }}</p>
+                            <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }}</p>
+                            <p><strong>Gender:</strong> {{ patient.gender }}</p>
+                            <p><strong>Blood Group:</strong> {{ patient.blood_group|default:"Not specified" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Phone:</strong> {{ patient.phone }}</p>
+                            <p><strong>Email:</strong> {{ patient.email }}</p>
+                            <p><strong>Address:</strong> {{ patient.address|default:"Not specified" }}</p>
+                            <p><strong>Allergies:</strong> {{ patient.allergies|default:"None" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Records Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title">Medical Records</h5>
+                        <a href="{% url 'medical_record_create' patient.pk %}" class="btn btn-success">Add Record</a>
+                    </div>
+                    {% if medical_records %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Diagnosis</th>
+                                        <th>Treatment</th>
+                                        <th>Doctor</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in medical_records %}
+                                    <tr>
+                                        <td>{{ record.date }}</td>
+                                        <td>{{ record.diagnosis }}</td>
+                                        <td>{{ record.treatment }}</td>
+                                        <td>{{ record.doctor }}</td>
+                                        <td>
+                                            <a href="{% url 'medical_record_update' record.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="{% url 'medical_record_delete' record.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No medical records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Appointments Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title">Appointments</h5>
+                        <a href="{% url 'appointment_create' patient.pk %}" class="btn btn-success">Schedule Appointment</a>
+                    </div>
+                    {% if appointments %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Doctor</th>
+                                        <th>Purpose</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                    <tr>
+                                        <td>{{ appointment.date }}</td>
+                                        <td>{{ appointment.time }}</td>
+                                        <td>{{ appointment.doctor }}</td>
+                                        <td>{{ appointment.purpose }}</td>
+                                        <td>{{ appointment.status }}</td>
+                                        <td>
+                                            <a href="{% url 'appointment_update' appointment.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="{% url 'appointment_delete' appointment.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No appointments found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Lab Tests Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title">Lab Tests</h5>
+                        <a href="{% url 'lab_test_create' patient.pk %}" class="btn btn-success">Add Lab Test</a>
+                    </div>
+                    {% if lab_tests %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Test Name</th>
+                                        <th>Date</th>
+                                        <th>Doctor</th>
+                                        <th>Status</th>
+                                        <th>Result</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for test in lab_tests %}
+                                    <tr>
+                                        <td>{{ test.test_name }}</td>
+                                        <td>{{ test.test_date }}</td>
+                                        <td>{{ test.doctor }}</td>
+                                        <td>{{ test.status }}</td>
+                                        <td>{{ test.result|default:"Pending" }}</td>
+                                        <td>
+                                            <a href="{% url 'lab_test_update' test.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="{% url 'lab_test_delete' test.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No lab tests found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
